@@ -90,9 +90,23 @@ def find_square_by_mouse_pos(mouse_pos):
 
 
 def draw_pieces():
-    pass
-    # white_pawn = pygame.image.load("images/w_pawn_png_shadow_128px.png")
-    # screen.blit(white_pawn, (0, 0))
+    white_pawn = pygame.image.load("images/w_pawn_png_shadow_128px.png")
+    white_rook = pygame.image.load("images/w_rook_png_shadow_128px.png")
+    white_knight = pygame.image.load("images/w_knight_png_shadow_128px.png")
+    white_bishop = pygame.image.load("images/w_bishop_png_shadow_128px.png")
+    white_queen = pygame.image.load("images/w_queen_png_shadow_128px.png")
+    white_king = pygame.image.load("images/w_king_png_shadow_128px.png")
+
+    bottom_row_order = [white_rook, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight,
+                        white_rook]
+
+    for square in board[6]:
+        screen.blit(white_pawn, (square[1][0], square[1][1]))
+
+    row_index = 0
+    for square in board[7]:
+        screen.blit(bottom_row_order[row_index], (square[1][0], square[1][1]))
+        row_index += 1
 
 while running:
     for event in pygame.event.get():
