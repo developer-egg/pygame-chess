@@ -63,7 +63,7 @@ def draw_squares():
             square_count_color_ref -= 1
 
 
-def find_square_by_pos(mouse_pos):
+def find_square_by_pos(pos):
     # find what square was clicked on
     for row in board:
         for square in row:
@@ -76,11 +76,11 @@ def find_square_by_pos(mouse_pos):
             bottom_x = bottom_right_corner[0]
             bottom_y = bottom_right_corner[1]
 
-            mouse_x = mouse_pos[0]
-            mouse_y = mouse_pos[1]
+            pos_x = pos[0]
+            pos_y = pos[1]
 
-            if mouse_x >= top_x and mouse_x <= bottom_x:
-                if mouse_y >= top_y and mouse_y <= bottom_y:
+            if pos_x >= top_x and pos_x <= bottom_x:
+                if pos_y >= top_y and pos_y <= bottom_y:
                     row_index = board.index(row)
                     col_index = row.index(square)
 
@@ -88,7 +88,11 @@ def find_square_by_pos(mouse_pos):
                     return (col_index, row_index)
 
 
+has_drawn_initial_pieces = False
+
 def draw_pieces():
+    global has_drawn_initial_pieces
+
     white_pawn = pygame.image.load("images/w_pawn_png_shadow_128px.png")
     white_rook = pygame.image.load("images/w_rook_png_shadow_128px.png")
     white_knight = pygame.image.load("images/w_knight_png_shadow_128px.png")
@@ -99,16 +103,36 @@ def draw_pieces():
     bottom_row_order = [white_rook, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight,
                         white_rook]
 
-    for board_square in board[6]:
-        top_x = board_square.top_left[0]
-        top_y = board_square.top_left[1]
+    if not has_drawn_initial_pieces:
+        for board_square in board[6]:
+            # add one so that the point is not on the edge
+            top_x = board_square.top_left[0] + 1
+            top_y = board_square.top_left[1] + 1
 
-        find_square_by_pos((top_x, top_y))
+            board_location = find_square_by_pos((top_x, top_y))
 
-        board_location = find_square_by_pos((top_x, top_y))
+            board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location), [(board_location[0], board_location[1] - 1)], "white")
+            screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
-        board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location))
-        screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
+        # for board_square in board[1]:
+        #     # add one so that the point is not on the edge
+        #     top_x = board_square.top_left[0] + 1
+        #     top_y = board_square.top_left[1] + 1
+        #
+        #     board_location = find_square_by_pos((top_x, top_y))
+        #
+        #     board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location),
+        #                                      [(board_location[0], board_location[1] - 1)], "white")
+        #     screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
+
+        has_drawn_initial_pieces = True
+
+    # draw pieces
+    for board_row in board:
+        for board_square in board_row:
+            if board_square.piece is not None:
+                #TODO: draw correct piece based on type
+                screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
     # row_index = 0
     # for square in board[7]:
@@ -118,6 +142,9 @@ def draw_pieces():
 
 
 running = True
+
+first_square = None
+second_square = None
 
 while running:
     draw_squares()
@@ -132,7 +159,40 @@ while running:
             # user left-clicked
             if mouse_presses[0]:
                 mouse_pos = pygame.mouse.get_pos()
-                find_square_by_pos(mouse_pos)
+                square_pos = find_square_by_pos(mouse_pos)
+
+                square = board[square_pos[1]][square_pos[0]]
+
+                if square is not None:
+                    if first_square is None and square.piece is not None:
+                        first_square = square
+                        # print(square_pos)
+                    elif first_square is not None:
+                        second_square = square
+                        # print(square_pos)
+
+                        if second_square.piece is None:
+                            legal_moves = first_square.piece.legal_moves
+                            is_legal_move = False
+
+                            for move in legal_moves:
+                                if move == square_pos:
+                                    is_legal_move = True
+
+                            if is_legal_move:
+                                # set the piece of the second
+                                piece = first_square.piece
+                                piece.actual_location = square.top_left
+                                piece.board_location = square_pos
+
+                                piece.legal_moves = [(square_pos[0], square_pos[1] - 1)]
+
+                                second_square.piece = first_square.piece
+
+                                # set first_square piece to none
+                                first_square.piece = None
+
+                        first_square = None
 
     pygame.display.update()
 
