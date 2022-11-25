@@ -20,6 +20,29 @@ board = [[None, None, None, None, None, None, None, None],
          [None, None, None, None, None, None, None, None]]
 
 
+def flip_board():
+    pieces = []
+
+    for row in board:
+        for square in row:
+            if square.piece is not None:
+                pieces.append(square.piece)
+                square.piece = None
+
+    # flip each piece's position
+    for piece in pieces:
+        piece.board_location = (piece.board_location[0], 7 - piece.board_location[1])
+        piece.actual_location = (piece.board_location[0] * 128, piece.board_location[1] * 128)
+
+    for row in board:
+        for square in row:
+            for piece in pieces:
+                if square.top_left == piece.actual_location:
+                    square.piece = piece
+
+
+
+
 def draw_squares():
     square_count = 0
     square_count_color_ref = 0
@@ -100,6 +123,13 @@ def draw_pieces():
     white_queen = pygame.image.load("images/w_queen_png_shadow_128px.png")
     white_king = pygame.image.load("images/w_king_png_shadow_128px.png")
 
+    black_pawn = pygame.image.load("images/b_pawn_png_shadow_128px.png")
+    black_rook = pygame.image.load("images/b_rook_png_shadow_128px.png")
+    black_knight = pygame.image.load("images/b_knight_png_shadow_128px.png")
+    black_bishop = pygame.image.load("images/b_bishop_png_shadow_128px.png")
+    black_queen = pygame.image.load("images/b_queen_png_shadow_128px.png")
+    black_king = pygame.image.load("images/b_king_png_shadow_128px.png")
+
     bottom_row_order = [white_rook, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight,
                         white_rook]
 
@@ -111,19 +141,18 @@ def draw_pieces():
 
             board_location = find_square_by_pos((top_x, top_y))
 
-            board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location), [(board_location[0], board_location[1] - 1)], "white")
+            board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location), [], "white")
             screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
-        # for board_square in board[1]:
-        #     # add one so that the point is not on the edge
-        #     top_x = board_square.top_left[0] + 1
-        #     top_y = board_square.top_left[1] + 1
-        #
-        #     board_location = find_square_by_pos((top_x, top_y))
-        #
-        #     board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location),
-        #                                      [(board_location[0], board_location[1] - 1)], "white")
-        #     screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
+        for board_square in board[1]:
+            # add one so that the point is not on the edge
+            top_x = board_square.top_left[0] + 1
+            top_y = board_square.top_left[1] + 1
+
+            board_location = find_square_by_pos((top_x, top_y))
+
+            board_square.piece = piece.Piece("pawn", black_pawn, (top_x, top_y), (board_location), [], "black")
+            screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
         has_drawn_initial_pieces = True
 
@@ -131,8 +160,10 @@ def draw_pieces():
     for board_row in board:
         for board_square in board_row:
             if board_square.piece is not None:
-                #TODO: draw correct piece based on type
-                screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
+                # update legal moves
+                board_square.piece.set_legal_moves(board)
+
+                screen.blit(board_square.piece.image, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
     # row_index = 0
     # for square in board[7]:
@@ -166,31 +197,41 @@ while running:
                 if square is not None:
                     if first_square is None and square.piece is not None:
                         first_square = square
-                        # print(square_pos)
                     elif first_square is not None:
                         second_square = square
-                        # print(square_pos)
 
-                        if second_square.piece is None:
-                            legal_moves = first_square.piece.legal_moves
-                            is_legal_move = False
+                        legal_moves = first_square.piece.legal_moves
+                        is_legal_move = False
 
-                            for move in legal_moves:
-                                if move == square_pos:
-                                    is_legal_move = True
+                        for move in legal_moves:
+                            if move == square_pos:
+                                is_legal_move = True
 
-                            if is_legal_move:
-                                # set the piece of the second
-                                piece = first_square.piece
-                                piece.actual_location = square.top_left
-                                piece.board_location = square_pos
+                        # makes sure you cannot capture your own piece
+                        if square.piece is not None:
+                            if square.piece.team == first_square.piece.team:
+                                is_legal_move = False
 
-                                piece.legal_moves = [(square_pos[0], square_pos[1] - 1)]
+                        if is_legal_move:
+                            # set the piece of the second
+                            piece = first_square.piece
+                            piece.actual_location = square.top_left
+                            piece.board_location = square_pos
 
-                                second_square.piece = first_square.piece
+                            piece.set_legal_moves(board)
 
-                                # set first_square piece to none
-                                first_square.piece = None
+                            # check if there was a capture
+                            if second_square.piece is not None and second_square.piece.team != first_square.piece.team:
+                                print("capture!")
+
+
+                            second_square.piece = first_square.piece
+
+                            # set first_square piece to none
+                            first_square.piece = None
+
+                            # flip the board so the other player can make their move
+                            flip_board()
 
                         first_square = None
 
