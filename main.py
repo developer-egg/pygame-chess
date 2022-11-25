@@ -130,8 +130,13 @@ def draw_pieces():
     black_queen = pygame.image.load("images/b_queen_png_shadow_128px.png")
     black_king = pygame.image.load("images/b_king_png_shadow_128px.png")
 
-    bottom_row_order = [white_rook, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight,
+    row_order_strings = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"]
+
+    white_row_order = [white_rook, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight,
                         white_rook]
+
+    black_row_order = [black_rook, black_knight, black_bishop, black_queen, black_king, black_bishop, black_knight,
+                       black_rook]
 
     if not has_drawn_initial_pieces:
         for board_square in board[6]:
@@ -144,6 +149,19 @@ def draw_pieces():
             board_square.piece = piece.Piece("pawn", white_pawn, (top_x, top_y), (board_location), [], "white")
             screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
 
+        row_order_index = 0
+
+        for board_square in board[7]:
+            # add one so that the point is not on the edge
+            top_x = board_square.top_left[0] + 1
+            top_y = board_square.top_left[1] + 1
+
+            board_location = find_square_by_pos((top_x, top_y))
+
+            board_square.piece = piece.Piece(row_order_strings[row_order_index], white_row_order[row_order_index], (top_x, top_y), (board_location), [], "white")
+            row_order_index += 1
+
+
         for board_square in board[1]:
             # add one so that the point is not on the edge
             top_x = board_square.top_left[0] + 1
@@ -153,6 +171,18 @@ def draw_pieces():
 
             board_square.piece = piece.Piece("pawn", black_pawn, (top_x, top_y), (board_location), [], "black")
             screen.blit(white_pawn, (board_square.piece.actual_location[0], board_square.piece.actual_location[1]))
+
+        row_order_index = 0
+
+        for board_square in board[0]:
+            # add one so that the point is not on the edge
+            top_x = board_square.top_left[0] + 1
+            top_y = board_square.top_left[1] + 1
+
+            board_location = find_square_by_pos((top_x, top_y))
+
+            board_square.piece = piece.Piece(row_order_strings[row_order_index], black_row_order[row_order_index], (top_x, top_y), (board_location), [], "black")
+            row_order_index += 1
 
         has_drawn_initial_pieces = True
 
