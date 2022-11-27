@@ -144,7 +144,6 @@ class Piece:
 
                     # if there is a piece in that position, don't allow "jumping" over it
                     if square.piece is not None:
-                        print('test')
                         break
                 except IndexError:
                     pass
@@ -174,27 +173,252 @@ class Piece:
                     self.legal_moves.append((board_location_x + posX, board_location_y + posY))
 
 
-        # elif self.type == "rook":
-        #     up_and_right_positions = []
-        #     up_and_left_positions = []
-        #     down_and_right_positions = []
-        #     down_and_left_positions = []
-        #
-        #     # up and right diagonal
-        #     for count in range(1, 8):
-        #         up_and_right_positions.append((count, count))
-        #
-        #     # up and left diagonal
-        #     for count in range(1, 8):
-        #         up_and_left_positions.append((-count, count))
-        #
-        #     # down and right diagonal
-        #     for count in range(1, 8):
-        #         up_and_left_positions.append((count, -count))
-        #
-        #     # down and left diagonal
-        #     for count in range(1, 8):
-        #         up_and_left_positions.append((-count, -count))
+        elif self.type == "rook":
+            up_positions = []
+            right_postions = []
+            down_positions = []
+            left_positions = []
+
+            for count in range(1, 8):
+                up_positions.append((0, count))
+
+            for count in range(1, 8):
+                right_postions.append((count, 0))
+
+            for count in range(1, 8):
+                down_positions.append((0, -count))
+
+            for count in range(1, 8):
+                left_positions.append((-count, 0))
+
+            for pos in up_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in right_postions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in down_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in left_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            # add the legal moves
+            positions = [up_positions, right_postions, down_positions, left_positions]
+
+            for position_type in positions:
+                for pos in position_type:
+                    posX = pos[0]
+                    posY = pos[1]
+
+                    self.legal_moves.append((board_location_x + posX, board_location_y + posY))
+
+        elif self.type == "queen":
+            up_and_right_positions = []
+            up_and_left_positions = []
+            down_and_right_positions = []
+            down_and_left_positions = []
+
+            # up and right diagonal
+            for count in range(1, 8):
+                up_and_right_positions.append((count, count))
+
+            # up and left diagonal
+            for count in range(1, 8):
+                up_and_left_positions.append((-count, count))
+
+            # down and right diagonal
+            for count in range(1, 8):
+                up_and_left_positions.append((count, -count))
+
+            # down and left diagonal
+            for count in range(1, 8):
+                up_and_left_positions.append((-count, -count))
+
+            for pos in up_and_right_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in up_and_left_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in down_and_right_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in down_and_left_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            up_positions = []
+            right_postions = []
+            down_positions = []
+            left_positions = []
+
+            for count in range(1, 8):
+                up_positions.append((0, count))
+
+            for count in range(1, 8):
+                right_postions.append((count, 0))
+
+            for count in range(1, 8):
+                down_positions.append((0, -count))
+
+            for count in range(1, 8):
+                left_positions.append((-count, 0))
+
+            for pos in up_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in right_postions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in down_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            for pos in left_positions:
+                posX = pos[0]
+                posY = pos[1]
+
+                try:
+                    # first test if the square exists
+                    square = board[board_location_y + posY][board_location_x + posX]
+
+                    # if there is a piece in that position, don't allow "jumping" over it
+                    if square.piece is not None:
+                        break
+                except IndexError:
+                    pass
+
+            # add the legal moves
+            positions = [up_positions, right_postions, down_positions, left_positions, up_and_left_positions, up_and_right_positions, down_and_left_positions, down_and_right_positions]
+
+            for position_type in positions:
+                for pos in position_type:
+                    posX = pos[0]
+                    posY = pos[1]
+
+                    self.legal_moves.append((board_location_x + posX, board_location_y + posY))
+
+
 
 
 
